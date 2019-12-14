@@ -1,0 +1,8 @@
+
+# Eclipse data
+/.settings
+/.classpath
+/.project
+
+# Compiled code
+/bin
