@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoaderUtility {
 
@@ -26,5 +28,16 @@ public class LoaderUtility {
 		}
 		reader.close();
 		return lines;
+	}
+	
+	/** Return Map of key:value pairs */
+	public static Map<String, String> loadTextMap(File file) throws IOException {
+		String[] data = loadTextFile(file);
+		Map<String, String> map = new HashMap<>();
+		for (String i : data) {
+			String[] split = i.split(":");
+			map.put(split[0], split[1]);
+		}
+		return map;
 	}
 }
