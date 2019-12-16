@@ -24,7 +24,7 @@ public class Engine {
 		
 		// Load world
 		Profiler.startProcess("WorldLoad");
-		world = new World(config, new File("assets//TerrainData//Castle.txt"));
+		world = new World(config, new File("assets//TerrainData//Castle"));
 		
 		// Create display
 		Profiler.startProcess("DisplayOpen");

@@ -1,11 +1,14 @@
 package resource;
 
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 public class LoaderUtility {
 
@@ -33,6 +36,36 @@ public class LoaderUtility {
 		// Finish
 		reader.close();
 		return lines;
+	}
+
+	/** Load image in file */
+	public static Image loadImage(File file) throws IOException {
+		return ImageIO.read(file);
+	}
+
+	/** Load image in file */
+	public static Image loadImage(File file, int width, int height) throws IOException {
+		return ImageIO.read(file).getScaledInstance(width, height, Image.SCALE_DEFAULT);
+	}
+	
+	/** Loads folder of images as Image array */
+	public static Image[] loadImageArray(File file) throws IOException {
+		File[] subs = file.listFiles();
+		Image[] images = new Image[subs.length];
+		for (int i=0; i< subs.length; i++) {
+			images[i] = loadImage(subs[i]);
+		}
+		return images;
+	}
+	
+	/** Loads folder of images as Image array */
+	public static Image[] loadImageArray(File file, int width, int height) throws IOException {
+		File[] subs = file.listFiles();
+		Image[] images = new Image[subs.length];
+		for (int i=0; i< subs.length; i++) {
+			images[i] = loadImage(subs[i], width, height);
+		}
+		return images;
 	}
 	
 	/** Return Map of key:value pairs */

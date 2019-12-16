@@ -2,6 +2,7 @@ package terrain;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,11 @@ public class TileMap implements Terrain {
 	private final int DENSITY;
 	/** Tile pixel dimension */
 	private int tileDim;
+	
+	/** Tile assets */
+	private TileAsset[] assets;
 	/** Tile matrix */
-	private int[][] map;
+	private int [][] map;
 	/** Baked terrain image */
 	private BufferedImage image;
 	
@@ -25,8 +29,29 @@ public class TileMap implements Terrain {
 		// Get config data
 		DENSITY = Integer.parseInt(config.get("horizontal_tile_density"));
 		
+		// Load assets
+		File data = new File(terrainData.getPath() + "//TileData");
+		File[] tileFiles = data.listFiles();
+		assets = new TileAsset[tileFiles.length];
+		for (int i=0; i < tileFiles.length; i++) {
+			
+			// Get images
+			Image[] images = LoaderUtility.loadImageArray(new File(tileFiles[i].getPath() + "//Images"));
+			
+			// Get merges
+			String[] merges = LoaderUtility.loadTextMap(new File(tileFiles[i].getPath() + "//Data.txt")).get("merges").split(",");
+			int[] intMerges = new int[merges.length];
+			for (int j=0; j < merges.length; j++) {
+				intMerges[j] = Integer.parseInt(merges[j]);
+			}
+			
+			// Create asset
+			assets[i] = new TileAsset(images, intMerges);
+		}
+		
 		// Load tiles
-		String[] lines = LoaderUtility.loadTextFile(terrainData);
+		File mapFile = new File(terrainData.getPath() + "//Map.txt");
+		String[] lines = LoaderUtility.loadTextFile(mapFile);
 		map = new int[lines.length][];
 		for (int i=0; i<lines.length; i++) {
 			String[] words = lines[i].split(",");
@@ -53,6 +78,13 @@ public class TileMap implements Terrain {
 	/** Repaint baked image */
 	private void update(int width, int height) {
 		
+		// Validate assets
+		if (assets[0].getScale() != tileDim) {
+			for (TileAsset i : assets) {
+				i.scale(tileDim);
+			}
+		}
+		
 		// Create new image
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = image.getGraphics();
@@ -64,10 +96,44 @@ public class TileMap implements Terrain {
 		// Draw tiles
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
-				int c = (map[y][x] * 20) % 255;
-				g.setColor(new Color(c,c,c));
-				g.fillRect(x*tileDim, y*tileDim, tileDim, tileDim);
+				int code = map[y][x];
+				g.drawImage(assets[code].scaled[0], x*tileDim, y*tileDim, null);
 			}
+		}
+	}
+	
+	private class TileAsset {
+		/** All visual representations of material */
+		private final Image[] images;
+		/** All visual representations of material, scaled */
+		private Image[] scaled;
+		/** The codes of tiles this tile merges with */
+		private int[] merges;
+		private TileAsset(Image[] images, int[] merges) {
+			this.images = images;
+			this.merges = merges;
+			// Shallow copy
+			scaled = new Image[images.length];
+			for (int i=0; i < images.length; i++) {
+				scaled[i] = images[i];
+			}
+		}
+		private int getScale() {
+			return scaled[0].getWidth(null);
+		}
+		private void scale(int dimension) {
+			for (int i=0; i< images.length; i++) {
+				scaled[i] = images[i].getScaledInstance(dimension, dimension, Image.SCALE_DEFAULT);
+			}
+		}
+	}
+	
+	private class Tile {
+		private int tileCode;
+		private int orientationCode;
+		private Tile(int tileCode, int orientationCode) {
+			this.tileCode = tileCode;
+			this.orientationCode = orientationCode;
 		}
 	}
 }

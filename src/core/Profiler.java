@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/** Class to track custom process durations */
 public class Profiler {
 	
 	private static LinkedList<Process> processes = new LinkedList<>();
