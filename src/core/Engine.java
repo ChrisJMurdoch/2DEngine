@@ -14,19 +14,23 @@ public class Engine {
 	private final Display display;
 	
 	private Engine() throws IOException {
+		
 		// Load configuration data
 		Map<String, String> config = LoaderUtility.loadTextMap(new File("assets//Config.txt"));
+		
 		// Load world
-		world = new World(LoaderUtility.loadTextFile(new File("assets//World.txt")));
-		// Load display
+		world = new World(config, new File("assets//TerrainData//Castle.txt"));
+		
+		// Create display
 		display = new Display(
+			world,
 			Integer.parseInt(config.get("window_width")),
 			Integer.parseInt(config.get("window_height"))
 		);
 	}
 	
 	private void run() {
-		world.print();
+		display.repaint();
 	}
 	
 	public static void main(String[] args) {
@@ -34,7 +38,7 @@ public class Engine {
 			Engine engine = new Engine();
 			engine.run();
 		} catch (IOException e) {
-			System.err.println("Failed to read game data.");
+			System.err.println("Failed load game data.");
 			e.printStackTrace();
 		}
 	}
