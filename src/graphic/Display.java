@@ -44,4 +44,8 @@ public class Display extends JPanel {
 	public void paintComponent(Graphics g) {
 		world.draw(g, getWidth(), getHeight());
 	}
+
+	public void disposeFrame() {
+		frame.dispose();
+	}
 }
