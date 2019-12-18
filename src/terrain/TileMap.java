@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import core.Debug;
 import resource.LoaderUtility;
 
 public class TileMap {
@@ -73,8 +74,11 @@ public class TileMap {
 		
 		// Check image validity
 		if ( image == null || width != image.getWidth() || width != image.getWidth() ) {
+			Debug.DEBUG_TWO = "Map updating";
 			tileDim = width / DENSITY;
 			update(width, height);
+		} else {
+			Debug.DEBUG_TWO = "Map stable";
 		}
 		
 		// Draw
@@ -92,7 +96,7 @@ public class TileMap {
 		}
 		
 		// Create new image
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = image.getGraphics();
 		
 		// Draw background

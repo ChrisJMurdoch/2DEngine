@@ -3,6 +3,7 @@ package graphic;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,8 +18,9 @@ public class Display extends JPanel {
 	private final JFrame frame;
 	private final World world;
 	
-	/** Render sync variable */
-	private boolean renderReady = true;
+	/** Used for double buffering */
+	private BufferedImage buffer;
+	private Graphics b;
 	
 	public Display(World world, int width, int height) {
 		
@@ -42,40 +44,27 @@ public class Display extends JPanel {
 		// Display
 		frame.add(this);
 		frame.setVisible(true);
+		
+		// Create buffer
+		buffer = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		b = buffer.getGraphics();
 	}
 	
-	/** Render without request pooling */
-	public void syncRender() {
-		
-		// If rendering
-		if (!renderReady) {
-			// Wait for end notification
-			try {
-				synchronized(this) {
-					wait();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		renderReady = false;
-		repaint();
+	public void paintComponent() {
+		paintComponent(getGraphics());
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		
 		// Draw world
-		world.draw(g, getWidth(), getHeight());
+		world.draw(b, getWidth(), getHeight());
 		
 		// Draw HUD
-		Debug.draw(g, 0, 0);
+		Debug.draw(b, 0, 0);
 		
 		// Finish and sync
-		renderReady = true;
-		synchronized(this) {
-			notify();
-		}
+		g.drawImage(buffer, 0, 0, this);
 	}
 	
 	public void disposeFrame() {

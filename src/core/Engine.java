@@ -56,7 +56,7 @@ public class Engine {
 			long start = System.nanoTime();
 			
 			// Render
-			display.syncRender();
+			display.paintComponent();
 			
 			// Add to framerate
 			long duration = System.nanoTime() - start;
