@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import core.Debug;
 import world.World;
 
 public class Display extends JPanel {
@@ -15,6 +16,9 @@ public class Display extends JPanel {
 	
 	private final JFrame frame;
 	private final World world;
+	
+	/** Render sync variable */
+	private boolean renderReady = true;
 	
 	public Display(World world, int width, int height) {
 		
@@ -40,11 +44,40 @@ public class Display extends JPanel {
 		frame.setVisible(true);
 	}
 	
+	/** Render without request pooling */
+	public void syncRender() {
+		
+		// If rendering
+		if (!renderReady) {
+			// Wait for end notification
+			try {
+				synchronized(this) {
+					wait();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		renderReady = false;
+		repaint();
+	}
+	
 	@Override
 	public void paintComponent(Graphics g) {
+		
+		// Draw world
 		world.draw(g, getWidth(), getHeight());
+		
+		// Draw HUD
+		Debug.draw(g, 0, 0);
+		
+		// Finish and sync
+		renderReady = true;
+		synchronized(this) {
+			notify();
+		}
 	}
-
+	
 	public void disposeFrame() {
 		frame.dispose();
 	}

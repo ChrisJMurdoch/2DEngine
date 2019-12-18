@@ -42,11 +42,6 @@ public class LoaderUtility {
 	public static Image loadImage(File file) throws IOException {
 		return ImageIO.read(file);
 	}
-
-	/** Load image in file */
-	public static Image loadImage(File file, int width, int height) throws IOException {
-		return ImageIO.read(file).getScaledInstance(width, height, Image.SCALE_DEFAULT);
-	}
 	
 	/** Loads folder of images as Image array */
 	public static Image[] loadImageArray(File file) throws IOException {
@@ -58,12 +53,14 @@ public class LoaderUtility {
 		return images;
 	}
 	
-	/** Loads folder of images as Image array */
-	public static Image[] loadImageArray(File file, int width, int height) throws IOException {
-		File[] subs = file.listFiles();
-		Image[] images = new Image[subs.length];
-		for (int i=0; i< subs.length; i++) {
-			images[i] = loadImage(subs[i], width, height);
+	/** Loads folder of images as Image array, ordered numerically by name */
+	public static Image[] loadImageArrayOrdered(File file) throws IOException {
+		File[] imageFiles = file.listFiles();
+		Image[] images = new Image[imageFiles.length];
+		for (int i=0; i< imageFiles.length; i++) {
+			// Index into integer-cast filename instead of i
+			int index = Integer.parseInt(imageFiles[i].getName().split("\\.")[0]);
+			images[index] = loadImage(imageFiles[i]);
 		}
 		return images;
 	}

@@ -10,17 +10,17 @@ import java.util.Map;
 
 import resource.LoaderUtility;
 
-public class TileMap implements Terrain {
+public class TileMap {
 	
 	/** Tiles per width */
 	private final int DENSITY;
-	/** Tile pixel dimension */
-	private int tileDim;
 	
-	/** Tile assets */
+	/** Tile dimension in pixels */
+	private int tileDim;
+	/** Tile asset data */
 	private TileAsset[] assets;
 	/** Tile matrix */
-	private int [][] map;
+	private Tile [][] map;
 	/** Baked terrain image */
 	private BufferedImage image;
 	
@@ -36,7 +36,7 @@ public class TileMap implements Terrain {
 		for (int i=0; i < tileFiles.length; i++) {
 			
 			// Get images
-			Image[] images = LoaderUtility.loadImageArray(new File(tileFiles[i].getPath() + "//Images"));
+			Image[] images = LoaderUtility.loadImageArrayOrdered(new File(tileFiles[i].getPath() + "//Images"));
 			
 			// Get merges
 			String[] merges = LoaderUtility.loadTextMap(new File(tileFiles[i].getPath() + "//Data.txt")).get("merges").split(",");
@@ -46,23 +46,29 @@ public class TileMap implements Terrain {
 			}
 			
 			// Create asset
-			assets[i] = new TileAsset(images, intMerges);
+			assets[i] = new TileAsset(i, images, intMerges);
 		}
 		
 		// Load tiles
 		File mapFile = new File(terrainData.getPath() + "//Map.txt");
 		String[] lines = LoaderUtility.loadTextFile(mapFile);
-		map = new int[lines.length][];
+		map = new Tile[lines.length][];
 		for (int i=0; i<lines.length; i++) {
 			String[] words = lines[i].split(",");
-			map[i] = new int[words.length];
+			map[i] = new Tile[words.length];
 			for (int j=0; j<words.length; j++) {
-				map[i][j] = Integer.parseInt(words[j]);
+				map[i][j] = new Tile (assets[Integer.parseInt(words[j])]);
+			}
+		}
+		
+		// Calculate orientations
+		for (int i=0; i<map.length; i++) {
+			for (int j=0; j<map[0].length; j++) {
+				map[i][j].setOrientation(this.getOrientationCode(j, i));
 			}
 		}
 	}
 	
-	@Override
 	public void draw(Graphics g, int width, int height) {
 		
 		// Check image validity
@@ -75,11 +81,11 @@ public class TileMap implements Terrain {
 		g.drawImage(image, 0, 0, null);
 	}
 	
-	/** Repaint baked image */
+	/** Update baked image */
 	private void update(int width, int height) {
 		
 		// Validate assets
-		if (assets[0].getScale() != tileDim) {
+		if (assets[0].getSize() != tileDim) {
 			for (TileAsset i : assets) {
 				i.scale(tileDim);
 			}
@@ -96,44 +102,81 @@ public class TileMap implements Terrain {
 		// Draw tiles
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
-				int code = map[y][x];
-				g.drawImage(assets[code].scaled[0], x*tileDim, y*tileDim, null);
+				map[y][x].draw(g, x*tileDim, y*tileDim);
 			}
 		}
 	}
 	
-	private class TileAsset {
-		/** All visual representations of material */
-		private final Image[] images;
-		/** All visual representations of material, scaled */
-		private Image[] scaled;
-		/** The codes of tiles this tile merges with */
-		private int[] merges;
-		private TileAsset(Image[] images, int[] merges) {
-			this.images = images;
-			this.merges = merges;
-			// Shallow copy
-			scaled = new Image[images.length];
-			for (int i=0; i < images.length; i++) {
-				scaled[i] = images[i];
+	/** Calculate orientation code based on surrounding tiles */
+	private int getOrientationCode(int x, int y) {
+		
+		// Get surrounding merges
+		Tile tile = map[y][x];
+		boolean north = false, east = false, south = false, west = false;
+		try { north = tile.getAsset().merges(map[y-1][x].getAsset()); } catch (Exception e) {};
+		try { east = tile.getAsset().merges(map[y][x+1].getAsset()); } catch (Exception e) {};
+		try { south = tile.getAsset().merges(map[y+1][x].getAsset()); } catch (Exception e) {};
+		try { west = tile.getAsset().merges(map[y][x-1].getAsset()); } catch (Exception e) {};
+		
+		// Optimise for switch-case
+		int count = 0;
+		if (north)
+			count++;
+		if (east)
+			count++;
+		if (south)
+			count++;
+		if (west)
+			count++;
+		
+		// Determine orientation code
+		switch (count) {
+		
+		case 0:
+			return 0;
+			
+		case 1:
+			if (north)
+				return 1;
+			if (east)
+				return 2;
+			if (south)
+				return 3;
+			if (west)
+				return 4;
+			
+		case 2:
+			if (north) {
+				if (east)
+					return 5;
+				if (south)
+					return 9;
+				if (west)
+					return 8;
 			}
-		}
-		private int getScale() {
-			return scaled[0].getWidth(null);
-		}
-		private void scale(int dimension) {
-			for (int i=0; i< images.length; i++) {
-				scaled[i] = images[i].getScaledInstance(dimension, dimension, Image.SCALE_DEFAULT);
+			if (south) {
+				if (east)
+					return 6;
+				if (west)
+					return 7;
 			}
-		}
-	}
-	
-	private class Tile {
-		private int tileCode;
-		private int orientationCode;
-		private Tile(int tileCode, int orientationCode) {
-			this.tileCode = tileCode;
-			this.orientationCode = orientationCode;
+			return 10;
+			
+		case 3:
+			if (!north)
+				return 11;
+			if (!east)
+				return 12;
+			if (!south)
+				return 13;
+			if (!west)
+				return 14;
+			
+		case 4:
+			return 15;
+			
+		default:
+			return 0;
 		}
 	}
 }

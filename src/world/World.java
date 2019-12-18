@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import terrain.Terrain;
 import terrain.TileMap;
 
 public class World {
 	
-	private final Terrain terrain;
+	/** Class to load and store tile data */
+	private final TileMap terrain;
 	
 	public World(Map<String, String> config, File terrainData) throws IOException {
 		try {

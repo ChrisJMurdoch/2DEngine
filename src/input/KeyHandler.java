@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class KeyHandler implements KeyListener {
-
+	
 	private Set<Integer> activeKeys;
 	
 	public KeyHandler() {
