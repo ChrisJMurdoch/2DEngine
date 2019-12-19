@@ -9,12 +9,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import core.Debug;
+import core.Engine;
 import world.World;
 
 public class Display extends JPanel {
 	
 	private static final long serialVersionUID = -4770893642896180196L;
 	
+	// References
 	private final JFrame frame;
 	private final World world;
 	
@@ -22,7 +24,7 @@ public class Display extends JPanel {
 	private BufferedImage buffer;
 	private Graphics b;
 	
-	public Display(World world, int width, int height) {
+	public Display(World world) {
 		
 		this.world = world;
 		
@@ -33,12 +35,12 @@ public class Display extends JPanel {
 		// Create JFrame
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds( (screenWidth-width)/2, (screenHeight-height)/2, width, height );
+		frame.setBounds( (screenWidth - Engine.WINDOW_WIDTH) / 2, (screenHeight - Engine.WINDOW_HEIGHT) / 2, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT );
 		frame.setUndecorated(true);
 		frame.setLayout(new BorderLayout());
 		
 		// Create panel
-		setBounds(0, 0, width, height);
+		setBounds(0, 0, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT);
 		setFocusable(true);
 		
 		// Display
@@ -58,10 +60,10 @@ public class Display extends JPanel {
 	public void paintComponent(Graphics g) {
 		
 		// Draw world
-		world.draw(b, getWidth(), getHeight());
+		world.draw(b);
 		
 		// Draw HUD
-		Debug.draw(b, 0, 0);
+		Debug.draw(b, 5, 5);
 		
 		// Finish and sync
 		g.drawImage(buffer, 0, 0, this);

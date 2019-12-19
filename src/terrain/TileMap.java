@@ -9,15 +9,13 @@ import java.io.IOException;
 import java.util.Map;
 
 import core.Debug;
+import core.Engine;
+import entities.Observer;
+import entities.Sprite;
 import resource.LoaderUtility;
 
 public class TileMap {
 	
-	/** Tiles per width */
-	private final int DENSITY;
-	
-	/** Tile dimension in pixels */
-	private int tileDim;
 	/** Tile asset data */
 	private TileAsset[] assets;
 	/** Tile matrix */
@@ -25,10 +23,7 @@ public class TileMap {
 	/** Baked terrain image */
 	private BufferedImage image;
 	
-	public TileMap(Map<String, String> config, File terrainData) throws IOException {
-		
-		// Get config data
-		DENSITY = Integer.parseInt(config.get("horizontal_tile_density"));
+	public TileMap(File terrainData) throws IOException {
 		
 		// Load assets
 		File data = new File(terrainData.getPath() + "//TileData");
@@ -70,43 +65,35 @@ public class TileMap {
 		}
 	}
 	
-	public void draw(Graphics g, int width, int height) {
+	public void draw(Graphics g, Observer observer) {
 		
 		// Check image validity
-		if ( image == null || width != image.getWidth() || width != image.getWidth() ) {
+		if ( image == null ) {
 			Debug.DEBUG_TWO = "Map updating";
-			tileDim = width / DENSITY;
-			update(width, height);
+			update();
 		} else {
 			Debug.DEBUG_TWO = "Map stable";
 		}
 		
 		// Draw
-		g.drawImage(image, 0, 0, null);
+		g.drawImage(image, -observer.xOffset(), -observer.yOffset(), null);
 	}
 	
 	/** Update baked image */
-	private void update(int width, int height) {
-		
-		// Validate assets
-		if (assets[0].getSize() != tileDim) {
-			for (TileAsset i : assets) {
-				i.scale(tileDim);
-			}
-		}
+	private void update() {
 		
 		// Create new image
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		Graphics g = image.getGraphics();
 		
 		// Draw background
 		g.setColor(Color.RED);
-		g.fillRect(0, 0, width, height);
+		g.fillRect(0, 0, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT);
 		
 		// Draw tiles
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
-				map[y][x].draw(g, x*tileDim, y*tileDim);
+				map[y][x].draw(g, x*Engine.UNIT, y*Engine.UNIT);
 			}
 		}
 	}

@@ -12,6 +12,12 @@ import world.World;
 
 public class Engine {
 	
+	/** User configurations */
+	public static int WINDOW_WIDTH;
+	public static int WINDOW_HEIGHT;
+	/** Global unit of measure equal to one tile */
+	public static int UNIT;
+	
 	/** All game data */
 	private final World world;
 	
@@ -25,20 +31,23 @@ public class Engine {
 	private final long[] fps;
 	private int fpsIndex = 0;
 	
+	/** Used for delta-time */
+	private long lastTick;
+	
 	private Engine() throws IOException {
 		
 		// Load configuration data
 		Map<String, String> config = LoaderUtility.loadTextMap(new File("assets//Config.txt"));
+		WINDOW_WIDTH = Integer.parseInt(config.get("window_width"));
+		WINDOW_HEIGHT = Integer.parseInt(config.get("window_height"));
+		int density = Integer.parseInt(config.get("horizontal_tile_density"));
+		UNIT = WINDOW_WIDTH / density;
 		
 		// Load world
-		world = new World(config, new File("assets//TerrainData//Castle"));
+		world = new World(new File("assets//TerrainData//Castle"));
 		
 		// Create display
-		display = new Display(
-			world,
-			Integer.parseInt(config.get("window_width")),
-			Integer.parseInt(config.get("window_height"))
-		);
+		display = new Display(world);
 		
 		// Create and add listeners
 		display.addKeyListener(keyboard = new KeyHandler());
@@ -49,18 +58,34 @@ public class Engine {
 	
 	private void run() {
 		
+		lastTick = System.nanoTime() - 10000000;
+		
 		// Main engine loop
 		while (!keyboard.pressing(KeyEvent.VK_ESCAPE)) {
 			
 			// Get start-time
 			long start = System.nanoTime();
 			
+			// Get time-delta
+			long elapsed = start - lastTick;
+			double second = (double)elapsed / 1000000000;
+			
+			// Controls
+			double metresPerSecond = 2;
+			if (keyboard.pressing(KeyEvent.VK_W))
+				world.movePlayer(0, -second*metresPerSecond);
+			if (keyboard.pressing(KeyEvent.VK_A))
+				world.movePlayer(-second*metresPerSecond, 0);
+			if (keyboard.pressing(KeyEvent.VK_S))
+				world.movePlayer(0, second*metresPerSecond);
+			if (keyboard.pressing(KeyEvent.VK_D))
+				world.movePlayer(second*metresPerSecond, 0);
+			
 			// Render
 			display.paintComponent();
 			
 			// Add to framerate
-			long duration = System.nanoTime() - start;
-			fps[fpsIndex++] = duration;
+			fps[fpsIndex++] = elapsed;
 			fpsIndex %= fps.length;
 			
 			// Get average framerate
@@ -78,6 +103,9 @@ public class Engine {
 			// Display framerate
 			long averageTickNano = total / counted;
 			Debug.DEBUG_ONE = "Hz: " + 1000000000 / averageTickNano;
+			
+			// Set tick
+			lastTick = start;
 		}
 		
 		// Close window
