@@ -14,7 +14,7 @@ public class Debug {
 		
 		// Draw background
 		g.setColor(Color.BLACK);
-		g.fillRect(x, y, 100, 38);
+		g.fillRect(x, y, 96, 40);
 		
 		// Dsiplay data
 		g.setColor(Color.WHITE);

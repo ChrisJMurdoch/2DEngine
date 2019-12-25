@@ -3,7 +3,7 @@ package terrain;
 import java.awt.Graphics;
 import java.awt.Image;
 
-import core.Engine;
+import core.MainEngine;
 
 /** Data loaded from external file, can be altered centrally */
 public class TileAsset {
@@ -21,7 +21,7 @@ public class TileAsset {
 		// Shallow copy to scaled
 		this.images = new Image[images.length];
 		for (int i=0; i< images.length; i++) {
-			this.images[i] = images[i].getScaledInstance(Engine.UNIT, Engine.UNIT, Image.SCALE_DEFAULT);
+			this.images[i] = images[i].getScaledInstance(MainEngine.UNIT, MainEngine.UNIT, Image.SCALE_DEFAULT);
 		}
 	}
 	

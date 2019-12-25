@@ -3,7 +3,7 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import core.Engine;
+import core.MainEngine;
 
 public class Sprite {
 	
@@ -18,7 +18,7 @@ public class Sprite {
 	
 	public void draw(Graphics g, Observer observer) {
 		g.setColor(Color.MAGENTA);
-		g.drawRect((int)( (x * Engine.UNIT) - observer.xOffset()), (int)( (y * Engine.UNIT) - observer.yOffset()), (int)width * Engine.UNIT, (int)height * Engine.UNIT);
+		g.drawRect( (int)( (x * MainEngine.UNIT) - observer.xOffset()), (int)( (y * MainEngine.UNIT) - observer.yOffset()), (int)width * MainEngine.UNIT, (int)height * MainEngine.UNIT );
 	}
 	
 	public void move(double x, double y) {

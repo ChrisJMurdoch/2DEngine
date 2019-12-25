@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import core.Engine;
+import core.MainEngine;
 import entities.Observer;
 import entities.Sprite;
 import terrain.TileMap;

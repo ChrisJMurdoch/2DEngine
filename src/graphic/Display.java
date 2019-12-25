@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import core.Debug;
-import core.Engine;
+import core.MainEngine;
 import world.World;
 
 public class Display extends JPanel {
@@ -21,7 +21,7 @@ public class Display extends JPanel {
 	private final JFrame frame;
 	private final World world;
 	
-	/** Used for double buffering */
+	// Image for double buffering
 	private BufferedImage buffer;
 	private Graphics b;
 	
@@ -36,12 +36,12 @@ public class Display extends JPanel {
 		// Create JFrame
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds( (screenWidth - Engine.WINDOW_WIDTH) / 2, (screenHeight - Engine.WINDOW_HEIGHT) / 2, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT );
+		frame.setBounds( (screenWidth - MainEngine.WINDOW_WIDTH) / 2, (screenHeight - MainEngine.WINDOW_HEIGHT) / 2, MainEngine.WINDOW_WIDTH, MainEngine.WINDOW_HEIGHT );
 		frame.setUndecorated(true);
 		frame.setLayout(new BorderLayout());
 		
 		// Create panel
-		setBounds(0, 0, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT);
+		setBounds(0, 0, MainEngine.WINDOW_WIDTH, MainEngine.WINDOW_HEIGHT);
 		setFocusable(true);
 		
 		// Display
@@ -62,7 +62,7 @@ public class Display extends JPanel {
 		
 		//Clear
 		b.setColor(Color.MAGENTA);
-		b.fillRect(0, 0, Engine.WINDOW_WIDTH, Engine.WINDOW_HEIGHT);
+		b.fillRect(0, 0, MainEngine.WINDOW_WIDTH, MainEngine.WINDOW_HEIGHT);
 		
 		// Draw world
 		world.draw(b);
@@ -70,7 +70,7 @@ public class Display extends JPanel {
 		// Draw HUD
 		Debug.draw(b, 5, 5);
 		
-		// Finish and sync
+		// Draw to screen
 		g.drawImage(buffer, 0, 0, this);
 	}
 	
