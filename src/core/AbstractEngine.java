@@ -36,7 +36,6 @@ public abstract class AbstractEngine implements Runnable {
 			double seconds = (double)nanoSeconds / 1000000000;
 			
 			// Complete task in-thread
-			System.out.println(1/seconds);
 			tick(seconds);
 			
 			// Add duration to queue for monitoring
