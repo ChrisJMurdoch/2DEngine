@@ -1,14 +1,14 @@
 package terrain;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import core.Debug;
 import core.MainEngine;
 import entities.Observer;
+import graphic.BakedImage;
 import resource.LoaderUtility;
 
 public class TileMap {
@@ -17,11 +17,8 @@ public class TileMap {
 	private TileAsset[] assets;
 	/** Tile matrix */
 	private Tile [][] map;
-	
-	/** Engine on second thread for rendering expensive baked images */
-	private TerrainEngine updater;
-	// Position at which the baked image was created
-	private int bakedX, bakedY;
+	/** World image */
+	private BakedImage image;
 	
 	public TileMap(File terrainData) throws IOException {
 		
@@ -63,47 +60,30 @@ public class TileMap {
 				map[i][j].setOrientation(this.getOrientationCode(j, i));
 			}
 		}
-		
-		// Create updater
-		updater = new TerrainEngine(this);
 	}
 	
-	public void draw(Graphics g, Observer observer) {
+	/** Update baked image. */
+	public BakedImage update(int ox, int oy) {
 		
-		// Get current difference to baked image
-		int changedX = observer.xOffset() - bakedX;
-		int changedY = observer.yOffset() - bakedY;
-		
-		// Check image validity
-		if ( changedX < -20 || changedX > 20 || changedY < -20 || changedY > 20 )
-			updater.queueUpdate(observer);
-		
-		// Draw
-		g.drawImage(updater.getImage(), -MainEngine.BORDER - changedX, -MainEngine.BORDER - changedY, null);
-	}
-	
-	/** Update baked image.
-	 *  Best to call outside main rendering thread */
-	protected void update(Graphics g, Observer observer) {
-
-		// Clear background
-		g.setColor(Color.RED);
-		g.fillRect(0, 0, MainEngine.WINDOW_WIDTH + MainEngine.BORDER*2, MainEngine.WINDOW_HEIGHT + MainEngine.BORDER*2);
-		
-		// Get image location
-		int tx = observer.xOffset();
-		int ty = observer.yOffset();
+		// Create image
+		BufferedImage img = new BufferedImage(MainEngine.WINDOW_WIDTH + MainEngine.BORDER*2, MainEngine.WINDOW_HEIGHT + MainEngine.BORDER*2, BufferedImage.TYPE_INT_RGB);
+		Graphics g = img.getGraphics();
 		
 		// Draw tiles
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
-				map[y][x].draw( g, (x*MainEngine.UNIT) - tx, (y*MainEngine.UNIT) - ty );
+				map[y][x].draw( g, (x*MainEngine.UNIT) - ox, (y*MainEngine.UNIT) - oy );
 			}
 		}
 		
-		// Save location
-		bakedX = tx;
-		bakedY = ty;
+		// Create BakedImage
+		image = new BakedImage(img, ox, oy);
+		return image;
+	}
+	
+	/** For use by lighting library */
+	public Tile[][] getMap() {
+		return map;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */

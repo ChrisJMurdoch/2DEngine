@@ -21,9 +21,9 @@ public class Debug {
 		g.setColor(Color.BLACK);
 		g.fillRect(x, y, 96, 40);
 		
-		// Dsiplay data
+		// Display data 
 		g.setColor(Color.WHITE);
-		g.drawString(DEBUG_ONE, x+2, y+12);
+		g.drawString(DEBUG_ONE, x+2, y+12); 
 		g.drawString(DEBUG_TWO, x+2, y+24);
 		g.drawString(DEBUG_THREE, x+2, y+36);
 		

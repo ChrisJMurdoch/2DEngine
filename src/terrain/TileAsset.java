@@ -54,4 +54,8 @@ public class TileAsset {
 		}
 		return false;
 	}
+	
+	public int getCode() {
+		return code;
+	}
 }

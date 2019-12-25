@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import core.MainEngine;
+import core.TerrainEngine;
 import entities.Observer;
 import entities.Sprite;
+import lighting.LightMap;
 import terrain.TileMap;
 
 public class World {
@@ -18,6 +20,9 @@ public class World {
 	/** Player and main observer */
 	private Observer player;
 	
+	/** Engine on second thread for rendering expensive baked images */
+	private TerrainEngine terrainEngine;
+	
 	public World(File terrainData) throws IOException {
 		try {
 			terrain = new TileMap(terrainData);
@@ -26,10 +31,16 @@ public class World {
 			throw e;
 		}
 		player = new Observer(8, 8, 1, 1);
+
+		// Create updater
+		terrainEngine = new TerrainEngine(terrain, player);
 	}
 	
 	public void draw(Graphics g) {
-		terrain.draw(g, player);
+		
+		// Draw
+		terrainEngine.draw(g);
+		
 		player.draw(g, player);
 	}
 	

@@ -21,7 +21,7 @@ public class Tile {
 		asset.draw(g, x, y, orientationCode);
 	}
 	
-	protected TileAsset getAsset() {
+	public TileAsset getAsset() {
 		return asset;
 	}
 }
