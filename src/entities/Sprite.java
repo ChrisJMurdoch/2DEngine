@@ -7,25 +7,18 @@ import core.Engine;
 
 public class Sprite {
 	
-	private double x;
-	private double y;
+	protected double x, y, width, height;
 	
-	public Sprite(double x, double y) {
+	public Sprite(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
 	
 	public void draw(Graphics g, Observer observer) {
 		g.setColor(Color.MAGENTA);
-		g.drawRect((int)(x*Engine.UNIT-observer.xOffset()), (int)(y*Engine.UNIT-observer.yOffset()), 5, 5);
-	}
-	
-	public double getX() {
-		return x;
-	}
-	
-	public double getY() {
-		return y;
+		g.drawRect((int)( (x * Engine.UNIT) - observer.xOffset()), (int)( (y * Engine.UNIT) - observer.yOffset()), (int)width * Engine.UNIT, (int)height * Engine.UNIT);
 	}
 	
 	public void move(double x, double y) {

@@ -1,3 +1,4 @@
 window_width:1920
 window_height:1080
 horizontal_tile_density:16
+border:100

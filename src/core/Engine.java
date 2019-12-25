@@ -12,19 +12,24 @@ import world.World;
 
 public class Engine {
 	
-	/** User configurations */
+	// User configurations
 	public static int WINDOW_WIDTH;
 	public static int WINDOW_HEIGHT;
 	/** Global unit of measure equal to one tile */
 	public static int UNIT;
+	/** Scroll buffer at screen edges */
+	public static int BORDER;
+
+	/** Global thread poll */
+	public static boolean running = true;
 	
-	/** All game data */
+	/** Game data */
 	private final World world;
 	
 	/** Engine window */
 	private final Display display;
 	
-	/** KeyListener implementation */
+	/** Key listener */
 	private final KeyHandler keyboard;
 	
 	/** Queue to store frame durations in nanoseconds */
@@ -40,8 +45,8 @@ public class Engine {
 		Map<String, String> config = LoaderUtility.loadTextMap(new File("assets//Config.txt"));
 		WINDOW_WIDTH = Integer.parseInt(config.get("window_width"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("window_height"));
-		int density = Integer.parseInt(config.get("horizontal_tile_density"));
-		UNIT = WINDOW_WIDTH / density;
+		UNIT = WINDOW_WIDTH / Integer.parseInt(config.get("horizontal_tile_density"));
+		BORDER = Integer.parseInt(config.get("border"));
 		
 		// Load world
 		world = new World(new File("assets//TerrainData//Castle"));
@@ -89,19 +94,17 @@ public class Engine {
 			fpsIndex %= fps.length;
 			
 			// Get average framerate
-			int counted = 0;
-			long total = 0;
+			int count = 0;
+			long sum = 0;
 			for (long i : fps) {
-				if (i == 0) {
+				if (i == 0)
 					break;
-				} else {
-					counted++;
-				}
-				total += i;
+				count++;
+				sum += i;
 			}
 			
 			// Display framerate
-			long averageTickNano = total / counted;
+			long averageTickNano = sum / count;
 			Debug.DEBUG_ONE = "Hz: " + 1000000000 / averageTickNano;
 			
 			// Set tick
@@ -109,6 +112,7 @@ public class Engine {
 		}
 		
 		// Close window
+		running = false;
 		display.disposeFrame();
 	}
 	
