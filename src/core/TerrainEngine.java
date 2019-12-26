@@ -49,7 +49,7 @@ public class TerrainEngine extends AbstractEngine {
 			int oy = observer.yOffset();
 			
 			// Determine image to update
-			BufferedImage compound = new BufferedImage(MainEngine.WINDOW_WIDTH + MainEngine.BORDER*2, MainEngine.WINDOW_HEIGHT + MainEngine.BORDER*2, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage compound = new BufferedImage(MainEngine.WINDOW_WIDTH + MainEngine.BORDER*2, MainEngine.WINDOW_HEIGHT + MainEngine.BORDER*2, BufferedImage.TYPE_INT_RGB);
 			if (active == one) {
 				map.update(ox, oy).drawUncompensated(compound.getGraphics(), observer);
 				lighting.update(ox, oy).drawUncompensated(compound.getGraphics(), observer);

@@ -60,10 +60,6 @@ public class Display extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		
-		//Clear
-		b.setColor(Color.MAGENTA);
-		b.fillRect(0, 0, MainEngine.WINDOW_WIDTH, MainEngine.WINDOW_HEIGHT);
-		
 		// Draw world
 		world.draw(b);
 		
