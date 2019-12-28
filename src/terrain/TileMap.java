@@ -74,7 +74,7 @@ public class TileMap {
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
 				if (map[y][x].getAsset().illuminationRadius > 0) {
-					map[y][x].light = new Light( map[y][x].getAsset().illuminationRadius );
+					map[y][x].light = new Light( map[y][x].getAsset().illuminationRadius, getShadowmap(x, y, map[y][x].getAsset().illuminationRadius) );
 				}
 			}
 		}
@@ -110,6 +110,30 @@ public class TileMap {
 		}
 		
 		return lightmap;
+	}
+	
+	/** Get shadowmap for tile of given indexes */
+	private BufferedImage getShadowmap(int x, int y, int radius) {
+		
+		// Create image
+		int dimension = radius * MainEngine.UNIT * 2;
+		BufferedImage shadowmap = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = shadowmap.getGraphics();
+		
+		// Add shadows
+		g.setColor(new Color(0, 0, 0, 255));
+		int max = MainEngine.MAX_ILLUMINATION_RADIUS;
+		for ( int yDif= -max; yDif<max+1; yDif++) {
+			for ( int xDif= -max; xDif<max+1; xDif++) {
+				try {
+					if ( map[y+yDif][x+xDif].getAsset().opaque ) {
+						g.fillRect(dimension/2 + (int)((xDif-0.5)*MainEngine.UNIT), dimension/2 + (int)((yDif-0.5)*MainEngine.UNIT), MainEngine.UNIT, MainEngine.UNIT);
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {}
+			}
+		}
+		
+		return shadowmap;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */

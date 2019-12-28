@@ -1,5 +1,6 @@
 package terrain;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,7 +15,7 @@ public class Light {
 	private BufferedImage lightmap;
 	private float radius;
 	
-	protected Light(float rad) {
+	protected Light(float rad, BufferedImage shadowmap) {
 		
 		// Scale radius
 		radius = rad * MainEngine.UNIT;
@@ -35,6 +36,10 @@ public class Light {
 		// Draw light
 		g.setPaint(gradient);
 		g.fillRect(0, 0, dimension, dimension);
+		
+		// Remove light from shadows
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+		g.drawImage(shadowmap, 0, 0, null);
 	}
 	
 	protected void draw(Graphics g, int x, int y) {

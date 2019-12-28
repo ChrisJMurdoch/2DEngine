@@ -15,6 +15,7 @@ public class TileAsset {
 	/** Codes of tiles this aesthetically merges with */
 	private final int[] merges;
 	protected final int illuminationRadius;
+	protected final boolean opaque;
 	
 	/** Saved images scaled to window size */
 	private Image[] images;
@@ -31,6 +32,7 @@ public class TileAsset {
 		
 		// Get illumaination
 		illuminationRadius = Integer.parseInt(settings.get("illumination"));
+		opaque = settings.get("opaque").equals("true");
 		
 		// Scale images
 		this.images = new Image[images.length];

@@ -1,2 +1,3 @@
 merges:-2
 illumination:0
+opaque:true
