@@ -25,7 +25,7 @@ public class Animation {
 	private final int stepDuration;
 	private final Image[] images;
 
-	public Animation(File file, long baseTime) throws IOException {
+	public Animation(File file, long baseTime, int scale) throws IOException {
 		File imageFile = new File(file.getPath() + "//Images");
 		File dataFile = new File(file.getPath() + "//Data.txt");
 		Map<String, String> data = LoaderUtility.loadTextMap(dataFile);
@@ -34,7 +34,7 @@ public class Animation {
 		this.images = LoaderUtility.loadImageArray(imageFile);
 		// Scale
 		for (int i=0; i<images.length; i++) {
-			images[i] = images[i].getScaledInstance(MainEngine.UNIT, MainEngine.UNIT, Image.SCALE_DEFAULT);
+			images[i] = images[i].getScaledInstance(scale, scale, Image.SCALE_DEFAULT);
 		}
 		System.out.println(images[0].getHeight(null) + "2");
 	}

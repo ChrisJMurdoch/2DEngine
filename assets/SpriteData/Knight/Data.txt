@@ -1,4 +1,4 @@
 x:750
 y:600
-width:105
-height:105
+width:0.9
+height:0.9

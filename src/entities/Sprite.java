@@ -8,14 +8,12 @@ import core.MainEngine;
 public class Sprite {
 	
 	protected SpriteAsset asset;
-	protected double x, y, width, height;
+	protected double x, y;
 	private int animationCode = 0;
 	
-	public Sprite(double x, double y, double width, double height, SpriteAsset asset) {
+	public Sprite(double x, double y, SpriteAsset asset) {
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.asset = asset;
 	}
 	

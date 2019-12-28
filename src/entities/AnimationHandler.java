@@ -8,13 +8,13 @@ public class AnimationHandler {
 	
 	private final Animation[] animations;
 	
-	public AnimationHandler(File file, long baseTime) throws IOException {
+	public AnimationHandler(File file, long baseTime, int scale) throws IOException {
 		File[] subFiles = file.listFiles();
 		animations = new Animation[subFiles.length-1];
 		int index = 0;
 		for (int i=0; i<animations.length; i++)
 			if (subFiles[i].isDirectory()) {
-				animations[index++] = new Animation(subFiles[i], baseTime);
+				animations[index++] = new Animation(subFiles[i], baseTime, scale);
 		}
 	}
 	private AnimationHandler(Animation[] animations) {
@@ -30,7 +30,6 @@ public class AnimationHandler {
 	}
 
 	public void draw(Graphics g, int xOff, int yOff, long currentTime, int animationCode) {
-		System.out.println(xOff + "," + yOff);
 		animations[animationCode].draw(g, xOff, yOff, currentTime);
 	}
 }

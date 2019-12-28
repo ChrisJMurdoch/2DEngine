@@ -1,6 +1,7 @@
 package graphic;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -58,6 +59,10 @@ public class Display extends JPanel {
 	
 	@Override
 	public void paintComponent(Graphics g) {
+		
+		// Clear
+		b.setColor(Color.BLACK);
+		b.fillRect(0, 0, MainEngine.WINDOW_WIDTH, MainEngine.WINDOW_HEIGHT);
 		
 		// Draw world
 		world.draw(b);

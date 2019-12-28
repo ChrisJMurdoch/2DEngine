@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import core.MainEngine;
+import entities.Sprite;
 
 public class Tile {
 	
