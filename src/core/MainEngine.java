@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.MouseInfo;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class MainEngine extends AbstractEngine {
 	private MainEngine() {
 		super();
 		try {
-			world = new World(new File("assets//TerrainData//Castle"), new File("assets//SpriteData") );
+			world = new World(new File("assets//TerrainData//Castle"), new File("assets//SpriteData"), new File("assets//Misc") );
 			display = new Display(world);
 			display.addKeyListener(keyboard = new KeyHandler());
 		} catch (IOException e) {
@@ -90,6 +91,18 @@ public class MainEngine extends AbstractEngine {
 			y++;
 		if (keyboard.pressing(KeyEvent.VK_D))
 			x++;
+		
+		// Place tiles
+		if (keyboard.pressing(KeyEvent.VK_0))
+			world.changeTile(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, 0);
+		if (keyboard.pressing(KeyEvent.VK_1))
+			world.changeTile(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, 1);
+		if (keyboard.pressing(KeyEvent.VK_2))
+			world.changeTile(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, 2);
+		if (keyboard.pressing(KeyEvent.VK_3))
+			world.changeTile(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, 3);
+		if (keyboard.pressing(KeyEvent.VK_4))
+			world.changeTile(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, 4);
 		
 		// Move player
 		world.movePlayer(x*metresPerSecond*secondsElapsed, y*metresPerSecond*secondsElapsed);

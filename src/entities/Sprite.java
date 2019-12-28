@@ -44,14 +44,14 @@ public class Sprite {
 		do {
 			this.x = sx + (mult*x);
 			mult -= 0.1;
-		} while (terrain.isColliding(getCorners()));
+		} while (terrain.isColliding(getCorners()) && mult>0 );
 		
 		// Try move y
 		mult = 1;
 		do {
 			this.y = sy + (mult*y);
 			mult -= 0.1;
-		} while (terrain.isColliding(getCorners()));
+		} while (terrain.isColliding(getCorners()) && mult>0 );
 		
 	}
 	

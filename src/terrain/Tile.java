@@ -42,4 +42,8 @@ public class Tile {
 	protected TileAsset getAsset() {
 		return asset;
 	}
+	
+	protected void setAsset(TileAsset asset) {
+		this.asset = asset;
+	}
 }

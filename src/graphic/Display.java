@@ -2,15 +2,20 @@ package graphic;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import core.Debug;
 import core.MainEngine;
+import resource.LoaderUtility;
 import world.World;
 
 public class Display extends JPanel {
@@ -25,7 +30,7 @@ public class Display extends JPanel {
 	private BufferedImage buffer;
 	private Graphics b;
 	
-	public Display(World world) {
+	public Display(World world) throws IOException {
 		
 		this.world = world;
 		
@@ -51,6 +56,11 @@ public class Display extends JPanel {
 		// Create buffer
 		buffer = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 		b = buffer.getGraphics();
+		
+		// Set cursor
+		BufferedImage cursorImg = (BufferedImage) LoaderUtility.loadImage(new File("assets\\Misc\\Cursor.png"));
+		Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "Cursor");
+		frame.getContentPane().setCursor(cursor);
 	}
 	
 	public void paintComponent() {

@@ -234,6 +234,56 @@ public class TileMap {
 		return false;
 	}
 	
+	public void changeTile(int x, int y, int code) {
+		
+		// Get position
+		int xi = x/MainEngine.UNIT, yi = y/MainEngine.UNIT;
+		
+		// Change tile
+		try {
+			map[yi][xi].setAsset(assets[code]);
+			if (assets[code].illuminationRadius == 0)
+				map[yi][xi].light = null;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return;
+		}
+		
+		// Update lights in radius
+		int radius = MainEngine.MAX_ILLUMINATION_RADIUS;
+		for ( int yDif= -radius; yDif<radius+1; yDif++) {
+			for ( int xDif= -radius; xDif<radius+1; xDif++) {
+				try {
+					if (map[yi+yDif][xi+xDif].getAsset().illuminationRadius > 0)
+						map[yi+yDif][xi+xDif].light = new Light( map[yi+yDif][xi+xDif].getAsset().illuminationRadius, getShadowmap(xi+xDif, yi+yDif, map[yi+yDif][xi+xDif].getAsset().illuminationRadius) );
+				} catch (ArrayIndexOutOfBoundsException e) {
+					
+				}
+			}
+		}
+		
+		// Update orientations of adjacent tiles
+		for ( int yDif= -1; yDif<2; yDif++) {
+			for ( int xDif= -1; xDif<2; xDif++) {
+				try {
+					map[yi+yDif][xi+xDif].setOrientation(getOrientationCode(xi+xDif, yi+yDif));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					
+				}
+			}
+		}
+		
+		// Update baked lighting in radius
+		for ( int yDif= -radius; yDif<radius+1; yDif++) {
+			for ( int xDif= -radius; xDif<radius+1; xDif++) {
+				try {
+					map[yi+yDif][xi+xDif].update(getLightmap( xi+xDif, yi+yDif ));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					
+				}
+			}
+		}
+	}
+	
 	/** Calculate orientation code based on surrounding tiles */
 	private int getOrientationCode(int x, int y) {
 		
