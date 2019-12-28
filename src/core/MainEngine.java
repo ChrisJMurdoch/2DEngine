@@ -59,7 +59,7 @@ public class MainEngine extends AbstractEngine {
 	private MainEngine() {
 		super();
 		try {
-			world = new World(new File("assets//TerrainData//Castle"));
+			world = new World(new File("assets//TerrainData//Castle"), new File("assets//SpriteData") );
 			display = new Display(world);
 			display.addKeyListener(keyboard = new KeyHandler());
 		} catch (IOException e) {
@@ -77,15 +77,19 @@ public class MainEngine extends AbstractEngine {
 			running = false;
 		
 		// Respond to user-input
+		double x = 0, y = 0;
 		double metresPerSecond = 2;
 		if (keyboard.pressing(KeyEvent.VK_W))
-			world.movePlayer(0, -secondsElapsed*metresPerSecond);
+			y--;
 		if (keyboard.pressing(KeyEvent.VK_A))
-			world.movePlayer(-secondsElapsed*metresPerSecond, 0);
+			x--;
 		if (keyboard.pressing(KeyEvent.VK_S))
-			world.movePlayer(0, secondsElapsed*metresPerSecond);
+			y++;
 		if (keyboard.pressing(KeyEvent.VK_D))
-			world.movePlayer(secondsElapsed*metresPerSecond, 0);
+			x++;
+		
+		// Move player
+		world.movePlayer(x*metresPerSecond*secondsElapsed, y*metresPerSecond*secondsElapsed);
 		
 		// Update display
 		Debug.DEBUG_ONE = "Main FPS: " + getFrameRate();

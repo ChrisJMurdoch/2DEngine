@@ -5,8 +5,8 @@ import core.MainEngine;
 /** Sprite with ability to have screen focused on body centre */
 public class Observer extends Sprite {
 
-	public Observer(double x, double y, double width, double height) {
-		super(x, y, width, height);
+	public Observer(double x, double y, double width, double height, SpriteAsset asset) {
+		super(x, y, width, height, asset);
 	}
 	
 	/** Topleft corner co-ordinates, when centre-screen */
