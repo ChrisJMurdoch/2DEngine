@@ -92,7 +92,7 @@ public class MainEngine extends AbstractEngine {
 		world.movePlayer(x*metresPerSecond*secondsElapsed, y*metresPerSecond*secondsElapsed);
 		
 		// Update display
-		Debug.DEBUG_ONE = "Main FPS: " + getFrameRate();
+		Debug.DEBUG_ONE = "FPS: " + getFrameRate();
 		
 		// Render in-thread
 		display.paintComponent();

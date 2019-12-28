@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import core.Debug;
 import core.MainEngine;
 import entities.Observer;
 import resource.LoaderUtility;
@@ -210,6 +211,19 @@ public class TileMap {
 	
 	private double getAngle(int x, int y, int origin, int dimension) {
 		return Math.atan2( dimension/2 - y , dimension/2 - x ) * 180 / Math.PI;
+	}
+	
+	public boolean isColliding(Point2D[] points) {
+		for (Point2D i : points) {
+			try {
+				if (map[(int) Math.floor(i.getY())][(int) Math.floor(i.getX())].getAsset().opaque) {
+					return true;
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */

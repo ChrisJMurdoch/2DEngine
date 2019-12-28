@@ -34,9 +34,8 @@ public class Animation {
 		this.images = LoaderUtility.loadImageArray(imageFile);
 		// Scale
 		for (int i=0; i<images.length; i++) {
-			images[i] = images[i].getScaledInstance(scale, scale, Image.SCALE_DEFAULT);
+			images[i] = images[i].getScaledInstance(scale+1, scale+1, Image.SCALE_DEFAULT);
 		}
-		System.out.println(images[0].getHeight(null) + "2");
 	}
 
 	private int getStep(long currentTime) {
