@@ -23,6 +23,8 @@ public class MainEngine extends AbstractEngine {
 	public static final int GLOBAL_ALPHA;
 	/** How many tiles away a tile will check for light source */
 	public static final int MAX_ILLUMINATION_RADIUS;
+	/** How much light will penetrate opaque walls */
+	public static final int SHADOW_SEEPING;
 	
 	
 	// Engine references
@@ -49,12 +51,13 @@ public class MainEngine extends AbstractEngine {
 		UNIT = WINDOW_WIDTH / Integer.parseInt(config.get("horizontal_tile_density"));
 		GLOBAL_ALPHA = Integer.parseInt(config.get("global_alpha"));
 		MAX_ILLUMINATION_RADIUS = Integer.parseInt(config.get("max_illumination_radius"));
+		SHADOW_SEEPING = Integer.parseInt(config.get("shadow_seeping"));
 	}
 	
 	private MainEngine() {
 		super();
 		try {
-			world = new World(new File("assets//TerrainData//Test"));
+			world = new World(new File("assets//TerrainData//Castle"));
 			display = new Display(world);
 			display.addKeyListener(keyboard = new KeyHandler());
 		} catch (IOException e) {

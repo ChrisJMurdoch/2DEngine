@@ -37,6 +37,12 @@ public class Light {
 		g.setPaint(gradient);
 		g.fillRect(0, 0, dimension, dimension);
 		
+		// Allow light to pass through objects a little
+		Graphics2D s = (Graphics2D)shadowmap.getGraphics();
+		s.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+		s.setColor( new Color(0, 0, 0, MainEngine.SHADOW_SEEPING) );
+		s.fillRect( 0, 0, shadowmap.getWidth(), shadowmap.getHeight() );
+		
 		// Remove light from shadows
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
 		g.drawImage(shadowmap, 0, 0, null);

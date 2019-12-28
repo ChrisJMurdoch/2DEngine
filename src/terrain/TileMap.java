@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -130,68 +131,75 @@ public class TileMap {
 						//g.fillRect(origin + xDif*MainEngine.UNIT, origin + yDif*MainEngine.UNIT, MainEngine.UNIT, MainEngine.UNIT);
 						//g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0.5)*MainEngine.UNIT), origin + (int)((yDif+0.5)*MainEngine.UNIT));
 						
+						// Create points
+						Point p1 = new Point( origin+( (xDif)*MainEngine.UNIT ), origin+( (yDif)*MainEngine.UNIT ) );
+						Point p2 = new Point( origin+( (xDif+1)*MainEngine.UNIT ), origin+( (yDif)*MainEngine.UNIT ) );
+						Point p3 = new Point( origin+( (xDif+1)*MainEngine.UNIT ), origin+( (yDif+1)*MainEngine.UNIT ) );
+						Point p4 = new Point( origin+( (xDif)*MainEngine.UNIT ), origin+( (yDif+1)*MainEngine.UNIT ) );
+						
 						// Get gradient
-						double m1 = getAngle(yDif, xDif, origin, dimension) + 180;
-						System.out.println(m1);
-						double m2 = getAngle(yDif, xDif+1, origin, dimension) + 180;
-						System.out.println(m2);
-						double m3 = getAngle(yDif+1, xDif+1, origin, dimension) + 180;
-						System.out.println(m3);
-						double m4 = getAngle(yDif+1, xDif, origin, dimension) + 180;
-						System.out.println(m4 + "\n");
+						p1.setM( getAngle(p1.x, p1.y, origin, dimension) + 180 );
+						p2.setM( getAngle(p2.x, p2.y, origin, dimension) + 180 );
+						p3.setM( getAngle(p3.x, p3.y, origin, dimension) + 180 );
+						p4.setM( getAngle(p4.x, p4.y, origin, dimension) + 180 );
+						//System.out.println(p1.m);
+						//System.out.println(p2.m);
+						//System.out.println(p3.m);
+						//System.out.println(p4.m + "\n");
 						
 						// Get first gradient
-						double hm = m2 > m1 ? m2 : m1;
-						hm = m3 > hm ? m3 : hm;
-						hm = m4 > hm ? m4 : hm;
+						Point hm = p2.m > p1.m ? p2 : p1;
+						hm = p3.m > hm.m ? p3 : hm;
+						hm = p4.m > hm.m ? p4 : hm; 
 						
 						// Get last gradient
-						double lm = m2 < m1 ? m2 : m1;
-						lm = m3 < lm ? m3 : lm;
-						lm = m4 < lm ? m4 : lm;
+						Point lm = p2.m < p1.m ? p2 : p1;
+						lm = p3.m < lm.m ? p3 : lm;
+						lm = p4.m < lm.m ? p4 : lm;
 						
 						// Handle boundary exception
-						if (hm - lm > 180) {
+						if (hm.m - lm.m > 180) {
 							
 							// Middle outer terms
-							if (m1 == lm)
-								m1 += 180;
-							if (m2 == lm)
-								m2 += 180;
-							if (m3 == lm)
-								m3 += 180;
-							if (m4 == lm)
-								m4 += 180;
-							
-							if (m1 == hm)
-								m1 -= 180;
-							if (m2 == hm)
-								m2 -= 180;
-							if (m3 == hm)
-								m3 -= 180;
-							if (m4 == hm)
-								m4 -= 180;
+							if (p1 == lm)
+								p1.m += 180;
+							if (p2 == lm)
+								p2.m += 180;
+							if (p3 == lm)
+								p3.m += 180;
+							if (p4 == lm)
+								p4.m += 180;
+							if (p1 == hm)
+								p1.m -= 180;
+							if (p2 == hm)
+								p2.m -= 180;
+							if (p3 == hm)
+								p3.m -= 180;
+							if (p4 == hm)
+								p4.m -= 180;
 							
 							// Recalculate
-							hm = m2 > m1 ? m2 : m1;
-							hm = m3 > hm ? m3 : hm;
-							hm = m4 > hm ? m4 : hm;
+							hm = p2.m > p1.m ? p2 : p1;
+							hm = p3.m > hm.m ? p3 : hm;
+							hm = p4.m > hm.m ? p4 : hm;
 							
-							lm = m2 < m1 ? m2 : m1;
-							lm = m3 < lm ? m3 : lm;
-							lm = m4 < lm ? m4 : lm;
+							lm = p2.m < p1.m ? p2 : p1;
+							lm = p3.m < lm.m ? p3 : lm;
+							lm = p4.m < lm.m ? p4 : lm;
 						}
 						
-						// Draw
-						if (m1 == hm || m1 == lm)
-							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0)*MainEngine.UNIT), origin + (int)((yDif+0)*MainEngine.UNIT));
-						if (m2 == hm || m2 == lm)
-							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+1)*MainEngine.UNIT), origin + (int)((yDif+0)*MainEngine.UNIT));
-						if (m3 == hm || m3 == lm)
-							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+1)*MainEngine.UNIT), origin + (int)((yDif+1)*MainEngine.UNIT));
-						if (m4 == hm || m4 == lm)
-							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0)*MainEngine.UNIT), origin + (int)((yDif+1)*MainEngine.UNIT));
+						// Get projections
+						Point lp = lm.project(new Point(dimension/2, dimension/2), dimension);
+						Point hp = hm.project(new Point(dimension/2, dimension/2), dimension);
 						
+						// Create polygon
+						Polygon poly = new Polygon( new int[] { hm.x, hp.x, lp.x, lm.x }, new int[] { hm.y, hp.y, lp.y, lm.y }, 4);
+						
+						// Fill shadows
+						g.fillPolygon(poly);
+						
+						// Fill Tiles
+						g.fillRect(p1.x, p1.y, MainEngine.UNIT, MainEngine.UNIT);
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {}
 			}
@@ -201,7 +209,7 @@ public class TileMap {
 	}
 	
 	private double getAngle(int x, int y, int origin, int dimension) {
-		return Math.atan2( dimension/2 - ( origin+(y*MainEngine.UNIT) ) , dimension/2 - ( origin+(x*MainEngine.UNIT) ) ) * 180 / Math.PI;
+		return Math.atan2( dimension/2 - y , dimension/2 - x ) * 180 / Math.PI;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */
@@ -274,6 +282,31 @@ public class TileMap {
 			
 		default:
 			return 0;
+		}
+	}
+	
+	private class Point {
+		
+		private int x, y;
+		private double m;
+		
+		private Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		private void setM(double m) {
+			this.m = m;
+		}
+		
+		private Point project(Point from, int toX) {
+			int xDif = x - from.x;
+			int yDif = y - from.y;
+			int toDif = toX - from.x;
+			double mult = Math.abs((double)(toDif) / (double)xDif);
+			int scaledY = (int)( (double)yDif * mult );
+			toX = x < from.x ? 0 : toX;
+			return new Point(toX, scaledY+from.y);
 		}
 	}
 }
