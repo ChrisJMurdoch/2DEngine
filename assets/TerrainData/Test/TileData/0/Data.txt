@@ -1,0 +1,3 @@
+merges:1,2,3
+illumination:0
+opaque:false

@@ -54,7 +54,7 @@ public class MainEngine extends AbstractEngine {
 	private MainEngine() {
 		super();
 		try {
-			world = new World(new File("assets//TerrainData//Castle"));
+			world = new World(new File("assets//TerrainData//Test"));
 			display = new Display(world);
 			display.addKeyListener(keyboard = new KeyHandler());
 		} catch (IOException e) {

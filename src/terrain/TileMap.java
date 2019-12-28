@@ -122,18 +122,86 @@ public class TileMap {
 		
 		// Add shadows
 		g.setColor(new Color(0, 0, 0, 255));
-		int max = MainEngine.MAX_ILLUMINATION_RADIUS;
-		for ( int yDif= -max; yDif<max+1; yDif++) {
-			for ( int xDif= -max; xDif<max+1; xDif++) {
+		int origin = (int)( dimension/2 - (0.5*MainEngine.UNIT) );
+		for ( int yDif= -radius; yDif<radius+1; yDif++) {
+			for ( int xDif= -radius; xDif<radius+1; xDif++) {
 				try {
 					if ( map[y+yDif][x+xDif].getAsset().opaque ) {
-						g.fillRect(dimension/2 + (int)((xDif-0.5)*MainEngine.UNIT), dimension/2 + (int)((yDif-0.5)*MainEngine.UNIT), MainEngine.UNIT, MainEngine.UNIT);
+						//g.fillRect(origin + xDif*MainEngine.UNIT, origin + yDif*MainEngine.UNIT, MainEngine.UNIT, MainEngine.UNIT);
+						//g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0.5)*MainEngine.UNIT), origin + (int)((yDif+0.5)*MainEngine.UNIT));
+						
+						// Get gradient
+						double m1 = getAngle(yDif, xDif, origin, dimension) + 180;
+						System.out.println(m1);
+						double m2 = getAngle(yDif, xDif+1, origin, dimension) + 180;
+						System.out.println(m2);
+						double m3 = getAngle(yDif+1, xDif+1, origin, dimension) + 180;
+						System.out.println(m3);
+						double m4 = getAngle(yDif+1, xDif, origin, dimension) + 180;
+						System.out.println(m4 + "\n");
+						
+						// Get first gradient
+						double hm = m2 > m1 ? m2 : m1;
+						hm = m3 > hm ? m3 : hm;
+						hm = m4 > hm ? m4 : hm;
+						
+						// Get last gradient
+						double lm = m2 < m1 ? m2 : m1;
+						lm = m3 < lm ? m3 : lm;
+						lm = m4 < lm ? m4 : lm;
+						
+						// Handle boundary exception
+						if (hm - lm > 180) {
+							
+							// Middle outer terms
+							if (m1 == lm)
+								m1 += 180;
+							if (m2 == lm)
+								m2 += 180;
+							if (m3 == lm)
+								m3 += 180;
+							if (m4 == lm)
+								m4 += 180;
+							
+							if (m1 == hm)
+								m1 -= 180;
+							if (m2 == hm)
+								m2 -= 180;
+							if (m3 == hm)
+								m3 -= 180;
+							if (m4 == hm)
+								m4 -= 180;
+							
+							// Recalculate
+							hm = m2 > m1 ? m2 : m1;
+							hm = m3 > hm ? m3 : hm;
+							hm = m4 > hm ? m4 : hm;
+							
+							lm = m2 < m1 ? m2 : m1;
+							lm = m3 < lm ? m3 : lm;
+							lm = m4 < lm ? m4 : lm;
+						}
+						
+						// Draw
+						if (m1 == hm || m1 == lm)
+							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0)*MainEngine.UNIT), origin + (int)((yDif+0)*MainEngine.UNIT));
+						if (m2 == hm || m2 == lm)
+							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+1)*MainEngine.UNIT), origin + (int)((yDif+0)*MainEngine.UNIT));
+						if (m3 == hm || m3 == lm)
+							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+1)*MainEngine.UNIT), origin + (int)((yDif+1)*MainEngine.UNIT));
+						if (m4 == hm || m4 == lm)
+							g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0)*MainEngine.UNIT), origin + (int)((yDif+1)*MainEngine.UNIT));
+						
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {}
 			}
 		}
 		
 		return shadowmap;
+	}
+	
+	private double getAngle(int x, int y, int origin, int dimension) {
+		return Math.atan2( dimension/2 - ( origin+(y*MainEngine.UNIT) ) , dimension/2 - ( origin+(x*MainEngine.UNIT) ) ) * 180 / Math.PI;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */
