@@ -10,7 +10,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import core.MainEngine;
 import entities.Observer;
@@ -70,8 +69,15 @@ public class TileMap {
 		}
 	}
 	
-	/** Calculculate and bake-in tile lighting */
+	/** Calculate and bake-in tile lighting */
 	public void update() {
+		for (int y=0; y<map.length; y++) {
+			for (int x=0; x<map[0].length; x++) {
+				if (map[y][x].getAsset().illuminationRadius > 0) {
+					map[y][x].light = new Light( map[y][x].getAsset().illuminationRadius );
+				}
+			}
+		}
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
 				map[y][x].update(getLightmap(x, y));
@@ -92,20 +98,12 @@ public class TileMap {
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
 		// For surrounding tiles
 		int max = MainEngine.MAX_ILLUMINATION_RADIUS;
-		for ( int yDif=-max; yDif<max+1; yDif++) {
-			for ( int xDif=-max; xDif<max+1; xDif++) {
+		for ( int yDif= -max; yDif<max+1; yDif++) {
+			for ( int xDif= -max; xDif<max+1; xDif++) {
 				try {
-					if ( map[y+yDif][x+xDif].getAsset().illuminationRadius > 0 ) {
-						System.out.println(map[y+yDif][x+xDif].getAsset().illuminationRadius);
-						float radius = map[y+yDif][x+xDif].getAsset().illuminationRadius * MainEngine.UNIT;
-						RadialGradientPaint gradient = new RadialGradientPaint(
-							new Point2D.Double( (double)(xDif+0.5) * MainEngine.UNIT, (double)(yDif+0.5) * MainEngine.UNIT ),
-							radius,
-							new float[] { 0, 1 },
-							new Color[] { new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0f) }
-						);
-						g.setPaint(gradient);
-						g.fillRect(x-(int)radius, y-(int)radius, (int)radius * 2, (int)radius * 2);
+					if ( map[y+yDif][x+xDif].light != null ) {
+						map[y+yDif][x+xDif].light.draw(g, (int)((xDif+0.5)*MainEngine.UNIT), (int)((yDif+0.5)*MainEngine.UNIT));
+						//g.drawRect(10, 10, 90, 90);
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {}
 			}

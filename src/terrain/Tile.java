@@ -1,6 +1,5 @@
 package terrain;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -15,6 +14,8 @@ public class Tile {
 	private int orientationCode;
 	/** Image of tile with light baked-in */
 	private BufferedImage baked;
+	/** Lightmap if this is a lightsource, null otherwise */
+	protected Light light;
 	
 	protected Tile(TileAsset asset) {
 		this.asset = asset;

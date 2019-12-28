@@ -1,2 +1,2 @@
 merges:1
-illumination:0
+illumination:1
