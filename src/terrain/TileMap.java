@@ -117,14 +117,19 @@ public class TileMap {
 	/** Get shadowmap for tile of given indexes */
 	private BufferedImage getShadowmap(int x, int y, int radius) {
 		
+		// Get supersample ratio
+		double ssRatio = MainEngine.SSAA;
+		/** Supersample tile size */
+		int SS = (int)(MainEngine.UNIT * ssRatio);
+		
 		// Create image
-		int dimension = radius * MainEngine.UNIT * 2;
+		int dimension = radius * SS * 2;
 		BufferedImage shadowmap = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = shadowmap.getGraphics();
 		
 		// Add shadows
 		g.setColor(new Color(0, 0, 0, 255));
-		int origin = (int)( dimension/2 - (0.5*MainEngine.UNIT) );
+		int origin = (int)( dimension/2 - (0.5*SS) );
 		for ( int yDif= -radius; yDif<radius+1; yDif++) {
 			for ( int xDif= -radius; xDif<radius+1; xDif++) {
 				try {
@@ -133,10 +138,10 @@ public class TileMap {
 						//g.drawLine(dimension/2, dimension/2, origin + (int)((xDif+0.5)*MainEngine.UNIT), origin + (int)((yDif+0.5)*MainEngine.UNIT));
 						
 						// Create points
-						Point p1 = new Point( origin+( (xDif)*MainEngine.UNIT ), origin+( (yDif)*MainEngine.UNIT ) );
-						Point p2 = new Point( origin+( (xDif+1)*MainEngine.UNIT ), origin+( (yDif)*MainEngine.UNIT ) );
-						Point p3 = new Point( origin+( (xDif+1)*MainEngine.UNIT ), origin+( (yDif+1)*MainEngine.UNIT ) );
-						Point p4 = new Point( origin+( (xDif)*MainEngine.UNIT ), origin+( (yDif+1)*MainEngine.UNIT ) );
+						Point p1 = new Point( origin+( (xDif)*SS ), origin+( (yDif)*SS ) );
+						Point p2 = new Point( origin+( (xDif+1)*SS ), origin+( (yDif)*SS ) );
+						Point p3 = new Point( origin+( (xDif+1)*SS ), origin+( (yDif+1)*SS ) );
+						Point p4 = new Point( origin+( (xDif)*SS ), origin+( (yDif+1)*SS ) );
 						
 						// Get gradient
 						p1.setM( getAngle(p1.x, p1.y, origin, dimension) + 180 );
@@ -200,13 +205,16 @@ public class TileMap {
 						g.fillPolygon(poly);
 						
 						// Fill Tiles
-						g.fillRect(p1.x, p1.y, MainEngine.UNIT, MainEngine.UNIT);
+						g.fillRect(p1.x, p1.y, SS, SS);
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {}
 			}
 		}
 		
-		return shadowmap;
+		BufferedImage bImg = new BufferedImage((int)(shadowmap.getWidth()/ssRatio), (int)(shadowmap.getHeight()/ssRatio), BufferedImage.TYPE_INT_ARGB);
+		bImg.getGraphics().drawImage(shadowmap.getScaledInstance((int)(shadowmap.getWidth()/ssRatio), (int)(shadowmap.getHeight()/ssRatio), Image.SCALE_AREA_AVERAGING), 0, 0, null);
+		
+		return bImg;
 	}
 	
 	private double getAngle(int x, int y, int origin, int dimension) {

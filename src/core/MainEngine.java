@@ -26,6 +26,8 @@ public class MainEngine extends AbstractEngine {
 	public static final int MAX_ILLUMINATION_RADIUS;
 	/** How much light will penetrate opaque walls */
 	public static final int SHADOW_SEEPING;
+	/** Super sample anti-aliasing factor; 1 = Normal resolution, 2 = 2x resolution */
+	public static final double SSAA;
 	
 	
 	// Engine references
@@ -54,6 +56,7 @@ public class MainEngine extends AbstractEngine {
 		GLOBAL_ALPHA = Integer.parseInt(config.get("global_alpha"));
 		MAX_ILLUMINATION_RADIUS = Integer.parseInt(config.get("max_illumination_radius"));
 		SHADOW_SEEPING = Integer.parseInt(config.get("shadow_seeping"));
+		SSAA = Double.parseDouble(config.get("ssaa"));
 	}
 	
 	private MainEngine() {

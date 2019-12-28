@@ -5,3 +5,4 @@ horizontal_tile_density:16
 global_alpha:100
 max_illumination_radius:7
 shadow_seeping:100
+ssaa:4
