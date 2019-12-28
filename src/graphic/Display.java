@@ -1,7 +1,6 @@
 package graphic;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -63,8 +62,9 @@ public class Display extends JPanel {
 		// Draw world
 		world.draw(b);
 		
-		// Draw HUD
-		Debug.draw(b, 5, 5);
+		// Draw Debug display
+		if (MainEngine.DEBUG)
+			Debug.draw(b, 5, 5);
 		
 		// Draw to screen
 		g.drawImage(buffer, 0, 0, this);

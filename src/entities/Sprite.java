@@ -18,7 +18,7 @@ public class Sprite {
 	
 	public void draw(Graphics g, Observer observer) {
 		g.setColor(Color.MAGENTA);
-		g.drawRect( (int)( (x * MainEngine.UNIT) - observer.xOffset()), (int)( (y * MainEngine.UNIT) - observer.yOffset()), (int)width * MainEngine.UNIT, (int)height * MainEngine.UNIT );
+		//g.drawRect( (int)( (x * MainEngine.UNIT) - observer.xOffset()), (int)( (y * MainEngine.UNIT) - observer.yOffset()), (int)width * MainEngine.UNIT, (int)height * MainEngine.UNIT );
 	}
 	
 	public void move(double x, double y) {

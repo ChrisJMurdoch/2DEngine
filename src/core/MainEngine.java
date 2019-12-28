@@ -15,6 +15,7 @@ public class MainEngine extends AbstractEngine {
 	
 	// User configurations
 	
+	public static final boolean DEBUG;
 	public static final int WINDOW_WIDTH;
 	public static final int WINDOW_HEIGHT;
 	/** Visual unit of measure equal to one tile */
@@ -46,6 +47,7 @@ public class MainEngine extends AbstractEngine {
 			System.err.println("Failed to read config file.");
 			e.printStackTrace();
 		}
+		DEBUG = config.get("debug").equals("true");
 		WINDOW_WIDTH = Integer.parseInt(config.get("window_width"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("window_height"));
 		UNIT = WINDOW_WIDTH / Integer.parseInt(config.get("horizontal_tile_density"));
