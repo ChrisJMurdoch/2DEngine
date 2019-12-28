@@ -3,20 +3,20 @@ package core;
 /** Custom class to abstract and modularise single-threaded repeating tasks with monitoring tools */
 public abstract class AbstractEngine implements Runnable {
 	
-	/** Public flag used to stop process */
-	public static boolean running;
+	/** Static flag used to stop program */
+	public static boolean running = true;
 	
 	/** Start time of last tick, used to determine next tick's measurements */
-	private long tick;
+	private long lastTick;
 	
 	/** Queue to store frame durations in nanoseconds */
 	private final double[] fps;
-	private int fpsIndex = 0;
+	private int fpsIndex;
 	
 	public AbstractEngine() {
-		running = true;
-		tick = System.nanoTime();
+		lastTick = System.nanoTime();
 		fps = new double[500];
+		fpsIndex = 0;
 	}
 	
 	public void start() {
@@ -30,7 +30,7 @@ public abstract class AbstractEngine implements Runnable {
 
 			// Get starting time
 			long start = System.nanoTime();
-			long nanoSeconds = start - tick;
+			long nanoSeconds = start - lastTick;
 			
 			// calculate time difference
 			double seconds = (double)nanoSeconds / 1000000000;
@@ -43,7 +43,7 @@ public abstract class AbstractEngine implements Runnable {
 			fpsIndex %= fps.length;
 			
 			// Save tick starting time
-			tick = start;
+			lastTick = start;
 		}
 		end();
 	}
@@ -64,6 +64,6 @@ public abstract class AbstractEngine implements Runnable {
 	 *  as possible and passed in the duration of the last tick in seconds */
 	public abstract void tick(double secondsElapsed);
 	
-	/** performed when enggine successfully exits */
+	/** performed when engine successfully exits */
 	public void end() {}
 }

@@ -1,14 +1,19 @@
 package terrain;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RadialGradientPaint;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import core.MainEngine;
 import entities.Observer;
-import graphic.BakedImage;
 import resource.LoaderUtility;
 
 public class TileMap {
@@ -17,8 +22,6 @@ public class TileMap {
 	private TileAsset[] assets;
 	/** Tile matrix */
 	private Tile [][] map;
-	/** World image */
-	private BakedImage image;
 	
 	public TileMap(File terrainData) throws IOException {
 		
@@ -31,15 +34,8 @@ public class TileMap {
 			// Get images
 			Image[] images = LoaderUtility.loadImageArrayOrdered(new File(tileFiles[i].getPath() + "//Images"));
 			
-			// Get merges
-			String[] merges = LoaderUtility.loadTextMap(new File(tileFiles[i].getPath() + "//Data.txt")).get("merges").split(",");
-			int[] intMerges = new int[merges.length];
-			for (int j=0; j < merges.length; j++) {
-				intMerges[j] = Integer.parseInt(merges[j]);
-			}
-			
 			// Create asset
-			assets[i] = new TileAsset(i, images, intMerges);
+			assets[i] = new TileAsset(i, images, LoaderUtility.loadTextMap(new File(tileFiles[i].getPath() + "//Data.txt")));
 		}
 		
 		// Load tiles
@@ -60,30 +56,62 @@ public class TileMap {
 				map[i][j].setOrientation(this.getOrientationCode(j, i));
 			}
 		}
+		
+		// Pre-render tile lighting
+		update();
 	}
 	
-	/** Update baked image. */
-	public BakedImage update(int ox, int oy) {
-		
-		// Create image
-		BufferedImage img = new BufferedImage(MainEngine.WINDOW_WIDTH + MainEngine.BORDER*2, MainEngine.WINDOW_HEIGHT + MainEngine.BORDER*2, BufferedImage.TYPE_INT_RGB);
-		Graphics g = img.getGraphics();
-		
+	public void draw(Graphics g, Observer observer) {
 		// Draw tiles
 		for (int y=0; y<map.length; y++) {
 			for (int x=0; x<map[0].length; x++) {
-				map[y][x].draw( g, (x*MainEngine.UNIT) - ox, (y*MainEngine.UNIT) - oy );
+				map[y][x].draw( g, (x*MainEngine.UNIT) - observer.xOffset(), (y*MainEngine.UNIT) - observer.yOffset() );
+			}
+		}
+	}
+	
+	/** Calculculate and bake-in tile lighting */
+	public void update() {
+		for (int y=0; y<map.length; y++) {
+			for (int x=0; x<map[0].length; x++) {
+				map[y][x].update(getLightmap(x, y));
+			}
+		}
+	}
+	
+	/** Get lightmap for tile of given indexes */
+	private BufferedImage getLightmap(int x, int y) {
+		
+		// Create dark image
+		BufferedImage lightmap = new BufferedImage( MainEngine.UNIT, MainEngine.UNIT, BufferedImage.TYPE_INT_ARGB );
+		Graphics2D g = (Graphics2D)lightmap.getGraphics();
+		g.setColor( new Color( 0, 0, 0, 255 - MainEngine.GLOBAL_ALPHA ));
+		g.fillRect( 0, 0, MainEngine.UNIT, MainEngine.UNIT );
+		
+		// Subtract lights
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+		// For surrounding tiles
+		int max = MainEngine.MAX_ILLUMINATION_RADIUS;
+		for ( int yDif=-max; yDif<max+1; yDif++) {
+			for ( int xDif=-max; xDif<max+1; xDif++) {
+				try {
+					if ( map[y+yDif][x+xDif].getAsset().illuminationRadius > 0 ) {
+						System.out.println(map[y+yDif][x+xDif].getAsset().illuminationRadius);
+						float radius = map[y+yDif][x+xDif].getAsset().illuminationRadius * MainEngine.UNIT;
+						RadialGradientPaint gradient = new RadialGradientPaint(
+							new Point2D.Double( (double)(xDif+0.5) * MainEngine.UNIT, (double)(yDif+0.5) * MainEngine.UNIT ),
+							radius,
+							new float[] { 0, 1 },
+							new Color[] { new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0f) }
+						);
+						g.setPaint(gradient);
+						g.fillRect(x-(int)radius, y-(int)radius, (int)radius * 2, (int)radius * 2);
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {}
 			}
 		}
 		
-		// Create BakedImage
-		image = new BakedImage(img, ox, oy);
-		return image;
-	}
-	
-	/** For use by lighting library */
-	public Tile[][] getMap() {
-		return map;
+		return lightmap;
 	}
 	
 	/** Calculate orientation code based on surrounding tiles */

@@ -19,8 +19,10 @@ public class MainEngine extends AbstractEngine {
 	public static final int WINDOW_HEIGHT;
 	/** Visual unit of measure equal to one tile */
 	public static final int UNIT;
-	/** Scroll buffer at screen edges */
-	public static final int BORDER;
+	/** 0 = Dark  -  255 = Light */
+	public static final int GLOBAL_ALPHA;
+	/** How many tiles away a tile will check for light source */
+	public static final int MAX_ILLUMINATION_RADIUS;
 	
 	
 	// Engine references
@@ -45,7 +47,8 @@ public class MainEngine extends AbstractEngine {
 		WINDOW_WIDTH = Integer.parseInt(config.get("window_width"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("window_height"));
 		UNIT = WINDOW_WIDTH / Integer.parseInt(config.get("horizontal_tile_density"));
-		BORDER = Integer.parseInt(config.get("border"));
+		GLOBAL_ALPHA = Integer.parseInt(config.get("global_alpha"));
+		MAX_ILLUMINATION_RADIUS = Integer.parseInt(config.get("max_illumination_radius"));
 	}
 	
 	private MainEngine() {

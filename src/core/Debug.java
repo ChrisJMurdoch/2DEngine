@@ -11,8 +11,11 @@ public class Debug {
 	public static String DEBUG_TWO = "Default";
 	public static String DEBUG_THREE = "Default";
 	
+	/** Target framerate */
 	private static int target = 120;
+	/** Debug bar variable */
 	private static boolean upper = false;
+	/** Bar image */
 	private static BufferedImage bar = new BufferedImage(target, 5, BufferedImage.TYPE_INT_RGB);
 	
 	public static void draw(Graphics g, int x, int y) {
@@ -26,6 +29,11 @@ public class Debug {
 		g.drawString(DEBUG_ONE, x+2, y+12); 
 		g.drawString(DEBUG_TWO, x+2, y+24);
 		g.drawString(DEBUG_THREE, x+2, y+36);
+		
+		drawDebugBar(g);
+	}
+	
+	private static void drawDebugBar(Graphics g) {
 		
 		// Get time
 		Graphics b = bar.getGraphics();

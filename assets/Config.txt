@@ -1,4 +1,5 @@
 window_width:1920
 window_height:1080
 horizontal_tile_density:16
-border:100
+global_alpha:50
+max_illumination_radius:5
