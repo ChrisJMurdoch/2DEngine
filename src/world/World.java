@@ -45,7 +45,7 @@ public class World {
 			System.err.println("Failed to load terrain.");
 			throw e;
 		}
-		player = new Observer(4, 5, spriteAssets[0]);
+		player = new Observer(8, 14, spriteAssets[0]);
 	}
 	
 	public void draw(Graphics g) {

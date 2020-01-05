@@ -1,8 +1,8 @@
-debug:true
+debug:false
 window_width:1920
 window_height:1080
 horizontal_tile_density:16
 global_alpha:100
-max_illumination_radius:7
+max_illumination_radius:5
 shadow_seeping:100
-ssaa:1
+ssaa:1.5
